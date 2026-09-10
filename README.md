@@ -18,5 +18,6 @@ A RESTful Task Management API built with NestJS and TypeScript.
 
 
 # Run the Application
-```npm run start:dev
-
+```
+npm run start:dev
+```
