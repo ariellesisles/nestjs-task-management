@@ -44,29 +44,35 @@ export class TasksService {
     return task;
   }
 
-  getTaskById(id: string): Task | undefined {
-    return this.tasks.find((task) => task.id === id);
+  getTaskById(id: string): Task {
+    const task = this.tasks.find((task) => task.id === id);
+    if (!task) {
+      throw new NotFoundException(`Task with ID "${id} not found."`);
+    }
+
+    return task;
   }
 
   deleteTask(id: string): any {
-    //find index
-    const index = this.tasks.findIndex((task) => task.id === id);
-
-    // if item exists in array splice
-    if (index !== -1) this.tasks.splice(index, 1);
+    const index = this.getTaskIndexById(id);
+    this.tasks.splice(index, 1);
   }
 
   updateTask(id: string, status: TaskStatus): Task {
-    // find index
-    const index = this.tasks.findIndex((task) => task.id === id);
+    const index = this.getTaskIndexById(id);
 
-    // check index
-    if (index === -1) throw new NotFoundException('Task not found');
-
-    // update status by index
     this.tasks[index].status = status;
 
-    // return updated array
     return this.tasks[index];
+  }
+
+  getTaskIndexById(id: String) {
+    const index = this.tasks.findIndex((task) => task.id === id);
+
+    if (index === -1) {
+      throw new NotFoundException(`Task with ID "${id}" not found.`);
+    }
+
+    return index;
   }
 }
