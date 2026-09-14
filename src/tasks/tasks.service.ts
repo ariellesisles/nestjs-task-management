@@ -2,13 +2,32 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model.js';
 import { v7 as uuid } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto.js';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto.js';
 
 @Injectable()
 export class TasksService {
   private tasks: Task[] = [];
 
-  getAllTasks(): Task[] {
-    return this.tasks;
+  getTasksWithFilter(filterDto: GetTasksFilterDto): Task[] {
+    const { status, search } = filterDto;
+
+    //define temporary array to hold result
+    let tasks = this.tasks;
+
+    // filter with status
+    if (status) {
+      tasks = tasks.filter((task) => task.status === status);
+    }
+
+    // filter with search
+    if (search) {
+      tasks = tasks.filter((task) =>
+        task.title.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
+
+    //return final result
+    return tasks;
   }
 
   createTask(createTaskDto: CreateTaskDto): Task {
@@ -37,7 +56,7 @@ export class TasksService {
     if (index !== -1) this.tasks.splice(index, 1);
   }
 
-  updateTask(id: string, status: TaskStatus) : Task {
+  updateTask(id: string, status: TaskStatus): Task {
     // find index
     const index = this.tasks.findIndex((task) => task.id === id);
 
@@ -48,6 +67,6 @@ export class TasksService {
     this.tasks[index].status = status;
 
     // return updated array
-     return this.tasks[index];
+    return this.tasks[index];
   }
 }
