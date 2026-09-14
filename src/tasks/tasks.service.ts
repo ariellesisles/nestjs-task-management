@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Task, TaskStatus } from './task.model.js';
 import { v7 as uuid } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto.js';
@@ -10,8 +14,8 @@ export class TasksService {
 
   getTasksWithFilter(filterDto: GetTasksFilterDto): Task[] {
     const { status, search } = filterDto;
-
     //define temporary array to hold result
+
     let tasks = this.tasks;
 
     // filter with status
@@ -60,6 +64,12 @@ export class TasksService {
 
   updateTask(id: string, status: TaskStatus): Task {
     const index = this.getTaskIndexById(id);
+
+    const isValidStatus = Object.values(TaskStatus).includes(status as TaskStatus);
+
+    if(isValidStatus){
+      throw new BadRequestException(`"${status}" is not a valid task status.`);
+    }
 
     this.tasks[index].status = status;
 
