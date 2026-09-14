@@ -32,13 +32,16 @@ export class TasksController {
     return this.tasksService.createTask(createTaskDto);
   }
 
-  @Delete(':id')
-  deleteTask(@Param('id') id: string): Task {
-    return this.tasksService.deleteTask(id);
-  }
+  // Create Multiple Task
 
   @Patch('/:id/status')
   updateTask(@Param('id') id: string, @Body() status: TaskStatus) {
     return this.tasksService.updateTask(id, status);
+  }
+
+  
+  @Delete(':id')
+  deleteTask(@Param('id') id: string): Task {
+    return this.tasksService.deleteTask(id);
   }
 }
