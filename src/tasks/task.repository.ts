@@ -21,7 +21,12 @@ export class TaskRepository extends Repository<Task> {
     return await this.find();
   }
 
-  async deleteTask(id: string): Promise<any> {
-    await this.delete(id);
+  async deleteTask(id: string): Promise<boolean> {
+    const result = await this.delete(id);
+
+    return (result.affected ?? 0) > 0;
   }
+
+
+
 }
