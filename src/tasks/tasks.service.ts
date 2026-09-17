@@ -3,10 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Task, TaskStatus } from './task.model.js';
+import {TaskStatus } from './task-status.enum.js';
 import { v7 as uuid } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto.js';
+import { Task } from './task.interface.js';
 
 @Injectable()
 export class TasksService {

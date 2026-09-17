@@ -11,7 +11,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5430,
+      port: 5440,
       username: 'postgres',
       password: 'password',
       database: 'task_db',

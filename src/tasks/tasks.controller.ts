@@ -9,9 +9,16 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service.js';
-import type { Task, TaskStatus } from './task.model.js';
+import type { TaskStatus } from './task-status.enum.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto.js';
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: TaskStatus;
+}
 
 @Controller('tasks')
 export class TasksController {
@@ -39,7 +46,6 @@ export class TasksController {
     return this.tasksService.updateTask(id, status);
   }
 
-  
   @Delete(':id')
   deleteTask(@Param('id') id: string): Task {
     return this.tasksService.deleteTask(id);

@@ -1,4 +1,4 @@
-import { TaskStatus } from "../task.model.js"
+import { TaskStatus } from "../task-status.enum.js"
 
 export class UpdateTaskDto {
     id: string;
