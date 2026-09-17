@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {TaskStatus } from './task-status.enum.js';
+import { TaskStatus } from './task-status.enum.js';
 import { v7 as uuid } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto.js';
@@ -63,16 +63,20 @@ export class TasksService {
     this.tasks.splice(index, 1);
   }
 
-  updateTask(id: string, status: TaskStatus): Task {
+  updateTask(id: string, status: string): Task {
+    const normalizedStatus = status.toUpperCase();
+
     const index = this.getTaskIndexById(id);
 
-    const isValidStatus = Object.values(TaskStatus).includes(status as TaskStatus);
+    const isValidStatus = Object.values(TaskStatus).includes(
+      normalizedStatus as TaskStatus,
+    );
 
-    if(isValidStatus){
+    if (!isValidStatus) {
       throw new BadRequestException(`"${status}" is not a valid task status.`);
     }
 
-    this.tasks[index].status = status;
+    this.tasks[index].status = status as TaskStatus;
 
     return this.tasks[index];
   }

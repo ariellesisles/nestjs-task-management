@@ -42,7 +42,7 @@ export class TasksController {
   // Create Multiple Task
 
   @Patch('/:id/status')
-  updateTask(@Param('id') id: string, @Body() status: TaskStatus) {
+  updateTask(@Param('id') id: string, @Body('status') status: string) {
     return this.tasksService.updateTask(id, status);
   }
 
