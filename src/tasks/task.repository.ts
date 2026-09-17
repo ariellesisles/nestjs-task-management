@@ -16,4 +16,12 @@ export class TaskRepository extends Repository<Task> {
     await this.save(task);
     return task;
   }
+
+  async getTasks(): Promise<Task[]> {
+    return await this.find();
+  }
+
+  async deleteTask(id: string): Promise<any> {
+    await this.delete(id);
+  }
 }
