@@ -1,7 +1,7 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { User } from './user.entity.js';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto.js';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
