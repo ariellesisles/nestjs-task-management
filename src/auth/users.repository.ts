@@ -1,8 +1,9 @@
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from './user.entity.js';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto.js';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersRepository {
@@ -13,7 +14,17 @@ export class UsersRepository {
 
   async createUser(authCredentialDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialDto;
-    const user = this.repo.create({ username, password });
+
+    // salt
+    const salt = await bcrypt.genSalt();
+    // hash
+    const hashPassword = await bcrypt.hash(password, salt);
+    console.log('salt:', salt);
+    console.log('hashPassword:', hashPassword);
+
+    //
+
+    const user = this.repo.create({ username, password: hashPassword });
     await this.repo.save(user);
   }
 }
