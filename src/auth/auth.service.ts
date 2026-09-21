@@ -9,9 +9,14 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto.js';
 import { getUniqueViolationConstraint } from '../common/database/database-error.util.js';
 
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './jwt-payload.interface.js';
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async signUp(dto: AuthCredentialsDto): Promise<void> {
     try {
@@ -29,15 +34,19 @@ export class AuthService {
     }
   }
 
-  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+  async signIn(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<{ accessToken: string }> {
     const { username, password } = authCredentialsDto;
-
     const user = await this.usersRepository.findByUsername(username);
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const payload: JwtPayload = { username };
+
+      const accessToken = this.jwtService.sign(payload);
+      return { accessToken };
+    } else {
       throw new UnauthorizedException('Invalid username or password');
     }
-
-    return 'success';
   }
 }
