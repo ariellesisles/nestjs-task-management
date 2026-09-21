@@ -17,14 +17,15 @@ export class UsersRepository {
 
     // salt
     const salt = await bcrypt.genSalt();
-    // hash
-    const hashPassword = await bcrypt.hash(password, salt);
-    console.log('salt:', salt);
-    console.log('hashPassword:', hashPassword);
 
-    //
+    //password hash
+    const hashPassword = await bcrypt.hash(password, salt);
 
     const user = this.repo.create({ username, password: hashPassword });
     await this.repo.save(user);
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return this.repo.findOne({ where: { username } });
   }
 }
