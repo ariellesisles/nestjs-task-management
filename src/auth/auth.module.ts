@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service.js';
-import { AuthController } from './auth.controller.js';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersRepository } from './users.repository.js';
-import { User } from './user.entity.js';
+import { User } from './user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './jwt.strategy';
+import { UsersRepository } from './users.repository';
 
 @Module({
   imports: [
@@ -18,13 +19,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get<number>('JWT_EXPIRES_IN', 3600),
+          expiresIn: configService.get<number>('JWT_EXPIRES_IN'),
         },
       }),
     }),
   ],
-  providers: [AuthService, UsersRepository],
+  providers: [AuthService, JwtStrategy, UsersRepository],
   controllers: [AuthController],
-  exports: [UsersRepository],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}

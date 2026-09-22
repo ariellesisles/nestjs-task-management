@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
-import { User } from './user.entity.js';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto.js';
+import { User } from './user.entity';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -15,17 +15,26 @@ export class UsersRepository {
   async createUser(authCredentialDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialDto;
 
-    // salt
-    const salt = await bcrypt.genSalt();
+    // Salt round cost factor to 10 round
+    const saltRounds = 10;
 
     //password hash
-    const hashPassword = await bcrypt.hash(password, salt);
+    const hashPassword = await bcrypt.hash(password, saltRounds);
 
     const user = this.repo.create({ username, password: hashPassword });
     await this.repo.save(user);
   }
 
-  async findByUsername(username: string): Promise<User | null> {
-    return this.repo.findOne({ where: { username } });
+  /**
+   *
+   * @param username
+   * @returns User explicitly select password (since select:false hides it by default)
+   */
+  async findByUsernameWithPassword(username: string): Promise<User | null> {
+    return this.repo
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.username=:username ', { username })
+      .getOne();
   }
 }

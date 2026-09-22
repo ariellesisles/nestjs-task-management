@@ -8,10 +8,10 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { TasksService } from './tasks.service.js';
-import type { TaskStatus } from './task-status.enum.js';
-import { CreateTaskDto } from './dto/create-task.dto.js';
-import { GetTasksFilterDto } from './dto/get-tasks-filter.dto.js';
+import { TasksService } from './tasks.service';
+import type { TaskStatus } from './task-status.enum';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 
 interface Task {
   id: string;

@@ -8,11 +8,11 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { TasksService } from './tasks.service.js';
-import { Task } from '../task.entity.js';
-import { CreateTaskDto } from '../dto/create-task.dto.js';
-import { TaskStatus } from '../task-status.enum.js';
-import { GetTasksFilterDto } from '../dto/get-tasks-filter.dto.js';
+import { TasksService } from './tasks.service';
+import { Task } from '../task.entity';
+import { CreateTaskDto } from '../dto/create-task.dto';
+import { TaskStatus } from '../task-status.enum';
+import { GetTasksFilterDto } from '../dto/get-tasks-filter.dto';
 
 @Controller({ path: 'tasks', version: '2' })
 export class TasksController {
