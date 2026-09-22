@@ -43,24 +43,25 @@ export class TasksService {
   }
 
   async updateTask(id: string, status: TaskStatus, user: User): Promise<Task> {
-    const task = await this.getTaskById(id, user);
-    const normalizedStatus = status.toUpperCase();
-
-    task.status = normalizedStatus as TaskStatus;
-
-    const isValidStatus = Object.values(TaskStatus).includes(
-      normalizedStatus as TaskStatus,
-    );
+    // 1. Normalize and validate status BEFORE touching the entity
+    const normalizedStatus = status.toUpperCase() as TaskStatus;
+    const isValidStatus = Object.values(TaskStatus).includes(normalizedStatus);
 
     if (!isValidStatus) {
       throw new BadRequestException(`"${status}" is not a valid task status.`);
     }
 
+    // 2. Retrieve task and verify user ownership
+    const task = await this.getTaskById(id, user);
+
+    // 3. Update status and persist
+    task.status = normalizedStatus;
+
     await this.taskRepository.save(task);
     return task;
   }
 
-  async deleteTask(id: string, user : User): Promise<void> {
+  async deleteTask(id: string, user: User): Promise<void> {
     const deleted = await this.taskRepository.deleteTask(id, user);
 
     if (!deleted) {
