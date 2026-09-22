@@ -7,14 +7,18 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task } from '../task.entity';
 import { CreateTaskDto } from '../dto/create-task.dto';
 import { TaskStatus } from '../task-status.enum';
 import { GetTasksFilterDto } from '../dto/get-tasks-filter.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { DebugJwtAuthGuard } from '../../auth/jwt-debug.strategy';
 
 @Controller({ path: 'tasks', version: '2' })
+@UseGuards(DebugJwtAuthGuard)
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
@@ -27,7 +31,6 @@ export class TasksController {
   updateTask(@Param('id') id: string, @Body('status') status: TaskStatus) {
     return this.tasksService.updateTask(id, status);
   }
-
 
   @Get()
   getTasks(@Query() filterDto: GetTasksFilterDto): Promise<Task[]> {
