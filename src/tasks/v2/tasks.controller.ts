@@ -16,6 +16,8 @@ import { TaskStatus } from '../task-status.enum';
 import { GetTasksFilterDto } from '../dto/get-tasks-filter.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { DebugJwtAuthGuard } from '../../auth/jwt-debug.strategy';
+import { GetUser } from '../../auth/get-user.decorator';
+import { User } from '../../auth/user.entity';
 
 @Controller({ path: 'tasks', version: '2' })
 @UseGuards(DebugJwtAuthGuard)
@@ -23,8 +25,11 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  async createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.tasksService.createTask(createTaskDto);
+  async createTask(
+    @Body() createTaskDto: CreateTaskDto,
+    @GetUser() user: User,
+  ): Promise<Task> {
+    return this.tasksService.createTask(createTaskDto, user);
   }
 
   @Patch('/:id/status')
@@ -33,8 +38,11 @@ export class TasksController {
   }
 
   @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto): Promise<Task[]> {
-    return this.tasksService.getTasks(filterDto);
+  getTasks(
+    @Query() filterDto: GetTasksFilterDto,
+    @GetUser() user: User,
+  ): Promise<Task[]> {
+    return this.tasksService.getTasks(filterDto, user);
   }
 
   @Get(':id')
