@@ -4,6 +4,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskStatus } from './task-status.enum';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { User } from '../auth/user.entity';
+import { NotFoundException } from '@nestjs/common';
 
 export class TaskRepository extends Repository<Task> {
   async getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
@@ -50,9 +51,14 @@ export class TaskRepository extends Repository<Task> {
     return task;
   }
 
-  async deleteTask(id: string): Promise<boolean> {
-    const result = await this.delete(id);
+  async deleteTask(id: string, user: User): Promise<boolean> {
+    // DELETE from task where id = :id AND userId = :userId
+    const result = await this.delete({ id, userId: user.id });
 
-    return (result.affected ?? 0) > 0;
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with ID "${id}" not found.`);
+    }
+
+    return true;
   }
 }
