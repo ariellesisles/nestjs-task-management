@@ -27,9 +27,4 @@ export class AuthController {
     return this.authService.signIn(authDTO);
   }
 
-  @Post('/test')
-  @UseGuards(AuthGuard('jwt'))
-  test(@Req() req: Request) {
-    console.log(req);
-  }
 }

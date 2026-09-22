@@ -43,7 +43,6 @@ export class AuthService {
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: JwtPayload = { sub: user.id, username: user.username };
       const accessToken = this.jwtService.sign(payload);
-
       return { accessToken };
     } else {
       throw new UnauthorizedException('Invalid username or password');
