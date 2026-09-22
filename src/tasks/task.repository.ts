@@ -22,7 +22,7 @@ export class TaskRepository extends Repository<Task> {
     // Search filter
     if (search?.trim()) {
       query.andWhere(
-        'task.title ILIKE :search OR task.description ILIKE : search',
+        'task.title ILIKE :search OR task.description ILIKE :search',
         { search: `%${search.trim()}%` },
       );
     }
