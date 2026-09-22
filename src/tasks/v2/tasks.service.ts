@@ -18,7 +18,7 @@ export class TasksService {
     private readonly taskRepository: TaskRepository,
   ) {}
 
-  getTasks(filterDto: GetTasksFilterDto, user : User): Promise<Task[]> {
+  getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
     return this.taskRepository.getTasks(filterDto, user);
   }
 
@@ -26,8 +26,10 @@ export class TasksService {
     return this.taskRepository.getAllTasks();
   }
 
-  async getTaskById(id: string): Promise<Task> {
-    const found = await this.taskRepository.findOne({ where: { id } });
+  async getTaskById(id: string, user: User): Promise<Task> {
+    const found = await this.taskRepository.findOne({
+      where: { id, userId: user.id },
+    });
 
     if (!found) {
       throw new NotFoundException(`Task with ID "${id} not found."`);
@@ -36,12 +38,12 @@ export class TasksService {
     return found;
   }
 
-  createTask(createTaskDto: CreateTaskDto, user : User): Promise<Task> {
-    return this.taskRepository.createTask(createTaskDto , user);
+  createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
+    return this.taskRepository.createTask(createTaskDto, user);
   }
 
-  async updateTask(id: string, status: TaskStatus): Promise<Task> {
-    const task = await this.getTaskById(id);
+  async updateTask(id: string, status: TaskStatus, user: User): Promise<Task> {
+    const task = await this.getTaskById(id, user);
     const normalizedStatus = status.toUpperCase();
 
     task.status = normalizedStatus as TaskStatus;
