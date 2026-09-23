@@ -17,6 +17,12 @@ async function bootstrap() {
     instrument: ObserveInstrument,
   });
 
+  // root endpoint
+  app.setGlobalPrefix('api/tms', {
+    // will respond without the prefix root
+    exclude: ['/'], 
+  });
+
   // init validation pipes
   app.useGlobalPipes(new ValidationPipe());
 
@@ -26,6 +32,12 @@ async function bootstrap() {
   // For URI versioning
   app.enableVersioning({
     type: VersioningType.URI,
+  });
+
+  // Enable CORS for your Next.js app
+  app.enableCors({
+    origin: 'http://localhost:4000', // Next.js port
+    credentials: true,
   });
 
   // Retrieve ConfigService instance
