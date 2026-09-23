@@ -8,21 +8,19 @@ import { Task } from './task.entity';
 import { TaskRepository } from './task.repository';
 import { DataSource } from 'typeorm';
 import { AuthModule } from '../auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Task]), ConfigModule, AuthModule],
   controllers: [TasksController, TasksControllerAsync],
-   providers: [
+  providers: [
     TasksService,
     TaskServiceAsync,
     {
       provide: TaskRepository,
       inject: [DataSource],
       useFactory: (dataSource: DataSource) => {
-        return new TaskRepository(
-          Task,
-          dataSource.createEntityManager(),
-        );
+        return new TaskRepository(Task, dataSource.createEntityManager());
       },
     },
   ],

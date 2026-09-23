@@ -7,11 +7,27 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
+// Determine env file based on NODE_ENV
+const getEnvFilePath = (): string => {
+  const env = process.env.NODE_ENV;
+  switch (env) {
+    case 'production':
+      return '.env.production';
+    case 'test':
+      return '.env.test';
+    case 'staging':
+      return '.env.staging';
+    default:
+      return '.env.development';
+  }
+};
+
 @Module({
   imports: [
     // Global Configuration
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: getEnvFilePath(),
     }),
 
     // Database Setup
