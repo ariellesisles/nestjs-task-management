@@ -4,6 +4,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { configValidationSchema } from './config.schema';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -28,6 +29,7 @@ const getEnvFilePath = (): string => {
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: getEnvFilePath(),
+      validationSchema: configValidationSchema,
     }),
 
     // Database Setup
@@ -41,7 +43,7 @@ const getEnvFilePath = (): string => {
         database: configService.getOrThrow<string>('DB_NAME'),
         username: configService.getOrThrow<string>('DB_USERNAME'),
         password: configService.getOrThrow<string>('DB_PASSWORD'),
-        synchronize: configService.get<boolean>('DB_SYNC', false),
+        synchronize: configService.get<boolean>('DB_SYNC'),
         autoLoadEntities: true,
       }),
     }),
