@@ -4,8 +4,6 @@ import {
   HttpCode,
   Logger,
   Post,
-  Req,
-  UseGuards,
 } from '@nestjs/common';
 import { SignUpDto } from './dto/signup.dto';
 import { AuthService } from './auth.service';
