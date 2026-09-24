@@ -7,25 +7,23 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { SignUpDto } from './dto/signup.dto';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '@nestjs/passport';
+import { SignInDto } from './dto/signin.dto';
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
-  singUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    return this.authService.signUp(authCredentialsDto);
+  singUp(@Body() signUpDto: SignUpDto): Promise<void> {
+    return this.authService.signUp(signUpDto);
   }
 
   @Post('/signin')
   @HttpCode(200)
-  singIn(
-    @Body() authDTO: AuthCredentialsDto,
-  ): Promise<{ accessToken: string }> {
-    this.logger.verbose(`User ${authDTO.username} wants to signin`)
-    return this.authService.signIn(authDTO);
+  singIn(@Body() signInDto: SignInDto): Promise<{ accessToken: string }> {
+    this.logger.verbose(`User ${signInDto.username} wants to signin`);
+    return this.authService.signIn(signInDto);
   }
 }

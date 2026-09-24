@@ -4,11 +4,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { SignUpDto } from './dto/signup.dto';
 import { getUniqueViolationConstraint } from '../common/database/database-error.util';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt-payload.interface';
+import { SignInDto } from './dto/signin.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,9 +18,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(dto: AuthCredentialsDto): Promise<void> {
+  async signUp(singUpDto: SignUpDto): Promise<void> {
     try {
-      await this.usersRepository.createUser(dto);
+      await this.usersRepository.createUser(singUpDto);
     } catch (error) {
       const constraint = getUniqueViolationConstraint(error);
 
@@ -33,10 +34,8 @@ export class AuthService {
     }
   }
 
-  async signIn(
-    authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ accessToken: string }> {
-    const { username, password } = authCredentialsDto;
+  async signIn(signInDto: SignInDto): Promise<{ accessToken: string }> {
+    const { username, password } = signInDto;
     const user =
       await this.usersRepository.findByUsernameWithPassword(username);
 

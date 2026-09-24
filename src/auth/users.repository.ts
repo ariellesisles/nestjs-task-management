@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { SignUpDto } from './dto/signup.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -12,8 +12,8 @@ export class UsersRepository {
     private readonly repo: Repository<User>,
   ) {}
 
-  async createUser(authCredentialDto: AuthCredentialsDto): Promise<void> {
-    const { username, password } = authCredentialDto;
+  async createUser(signUpDto: SignUpDto): Promise<void> {
+    const { username, password } = signUpDto;
 
     // Salt round cost factor to 10 round
     const saltRounds = 10;
