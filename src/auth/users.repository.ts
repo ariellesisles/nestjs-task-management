@@ -1,28 +1,40 @@
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { SignUpDto } from './dto/signup.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { UserProfile } from './user-profile.entity';
 
 @Injectable()
-export class UsersRepository {
-  constructor(
-    @InjectRepository(User)
-    private readonly repo: Repository<User>,
-  ) {}
+export class UsersRepository extends Repository<User> {
+  constructor(private readonly dataSource: DataSource) {
+    super(User, dataSource.createEntityManager());
+  }
 
-  async createUser(signUpDto: SignUpDto): Promise<void> {
+  async createUserWithProfile(signUpDto: SignUpDto): Promise<User> {
     const { username, password } = signUpDto;
 
-    // Salt round cost factor to 10 round
-    const saltRounds = 10;
+    //password Hash || Salt round cost factor to 10 round
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    //password hash
-    const hashPassword = await bcrypt.hash(password, saltRounds);
+    // Uses TypeORM's clean transaction callback wrapper
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const user = transactionalEntityManager.create(User, {
+        username: username,
+        password: hashedPassword,
+      });
+      const savedUser = await transactionalEntityManager.save(user);
 
-    const user = this.repo.create({ username, password: hashPassword });
-    await this.repo.save(user);
+      const profile = transactionalEntityManager.create(UserProfile, {
+        fullName: signUpDto.fullName,
+        email: signUpDto.email,
+        userId: savedUser.id,
+      });
+      await transactionalEntityManager.save(profile);
+
+      return savedUser;
+    });
   }
 
   /**
@@ -31,8 +43,7 @@ export class UsersRepository {
    * @returns User explicitly select password (since select:false hides it by default)
    */
   async findByUsernameWithPassword(username: string): Promise<User | null> {
-    return this.repo
-      .createQueryBuilder('user')
+    return this.createQueryBuilder('user')
       .addSelect('user.password')
       .where('user.username=:username ', { username })
       .getOne();

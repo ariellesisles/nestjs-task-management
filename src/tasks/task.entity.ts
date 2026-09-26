@@ -26,7 +26,10 @@ export class Task {
   @Column()
   userId: string;
 
-  @ManyToOne((_type) => User, (user) => user.tasks, { eager: false })
+  @ManyToOne(() => User, (user) => user.tasks, {
+    eager: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   @Exclude({ toPlainOnly: true }) // Dont show to JSON responses
   user: User;
